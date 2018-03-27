@@ -93,7 +93,7 @@ def return_classifier(method):
 
     return classifier
 
-def perform_experiment(dataset, target, methodName, nomeDataset, stopWords, stemming, termWeighting):
+def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, stopWords, stemming, termWeighting):
     
     classesDataset = list(set(target)) #possiveis classes da base de dados
     
@@ -145,10 +145,14 @@ def perform_experiment(dataset, target, methodName, nomeDataset, stopWords, stem
     auxMethod = methodName+'_'+termWeighting
     myFunctions.imprimiResultados(resultados,classesDataset,pathResults,auxMethod,nomeDataset)
     
-if __name__ == "__main__":
+def main():
     '''
     Parâmetros:
 
+	pathResults: é o endereço da base de dados. A base de dados precisa estar no formato CSV.
+                 A primeira linha dessa base deve conter o nome dos atributos. A última coluna
+                 deve ter o nome "class" e conter as classes do problema.
+                 
 	termWeighting:
 		TF: term frequency 
 		binary: os pesos dos termos são 0 se o termo aparece no texto ou 1 caso não apareça
@@ -179,7 +183,9 @@ if __name__ == "__main__":
     
     for methodName in metodos:
         print('%s' %(methodName))
-        perform_experiment(dataset, target, methodName, nomeDataset, stopWords, stemming, termWeighting)
+        perform_experiment(dataset, target, methodName, nomeDataset, pathResults, stopWords, stemming, termWeighting)
     
+if __name__ == "__main__":
     
+    main() #executa a função principal    
     

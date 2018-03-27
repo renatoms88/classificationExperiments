@@ -126,7 +126,15 @@ def perform_experiment(dataset, target, methodName, nomeDataset, pathResults):
     auxMethod = methodName
     myFunctions.imprimiResultados(resultados,classesDataset,pathResults,auxMethod,nomeDataset)
 
-def main():             
+def main(): 
+    '''
+    Parâmetros:
+
+	pathResults: é o endereço da base de dados. A base de dados precisa estar no formato CSV.
+                 A primeira linha dessa base deve conter o nome dos atributos. A última coluna
+                 deve ter o nome "class" e conter as classes do problema.
+    '''  
+          
     pathDataset = 'datasets/iris.csv'
     nomeDataset = 'iris' #vai ser usado quando for imprimir os resultados da classificação
     
