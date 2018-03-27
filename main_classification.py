@@ -145,7 +145,7 @@ def main():
     dataset = df_dataset.drop(['class'], axis=1).values #remove a coluna 'Class' e pega os valores das colunas restantes no formato de um array numpy
     target = df_dataset['class'].values #pega os valores da coluna Class e converte para o formato array numpy
     
-    metodos = ['G.NB'] #['G.NB','SVM','DT','LR','KNN','RF','bagging','adaboost']
+    metodos = ['G.NB','SVM','DT','LR','KNN','RF','bagging','adaboost'] 
     
     for methodName in metodos:
         print('\n\n\n########################################')

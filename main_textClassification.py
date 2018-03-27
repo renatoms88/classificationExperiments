@@ -179,7 +179,7 @@ def main():
     
     dataset, target = import_dataset(pathDataset)
     
-    metodos = ['M.NB'] #['M.NB','SVM','DT','LR','KNN','RF','bagging','adaboost']
+    metodos = ['M.NB','SVM','DT','LR','KNN','RF','bagging','adaboost'] 
     
     for methodName in metodos:
         print('%s' %(methodName))
