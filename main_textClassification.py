@@ -26,7 +26,9 @@ import myFunctions
 from sklearn.model_selection import StratifiedKFold
 
 def import_dataset(pathDataset):
-    
+    '''
+    Função usada para importar a base de dados textual
+    '''      
     datasetFile = open(pathDataset,'r') #abre arquivo para leitura
     
     dataset = [] #lista vazia que ira guardar as mensagens
@@ -48,6 +50,9 @@ def import_dataset(pathDataset):
     return dataset, target
    
 def return_classifier(method):
+    '''
+    Função usada para selecionar um método de classificação para ser usado no experimento
+    '''   
 
     if method == 'M.NB': #multinomial naive Bayes
         classifier = skl.naive_bayes.MultinomialNB()   
@@ -94,7 +99,9 @@ def return_classifier(method):
     return classifier
 
 def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, stopWords, stemming, termWeighting):
-    
+    '''
+    Função usada para executar os experimentos
+    '''    
     classesDataset = list(set(target)) #possiveis classes da base de dados
     
     #realiza as etapas de pre-processamento na base de dados
@@ -146,43 +153,58 @@ def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, st
     myFunctions.imprimiResultados(resultados,classesDataset,pathResults,auxMethod,nomeDataset)
     
 def main():
-    '''
-    Parâmetros:
-
-	pathResults: é o endereço da base de dados. A base de dados precisa estar no formato CSV.
-                 A primeira linha dessa base deve conter o nome dos atributos. A última coluna
-                 deve ter o nome "class" e conter as classes do problema.
-                 
-	termWeighting:
-		TF: term frequency 
-		binary: os pesos dos termos são 0 se o termo aparece no texto ou 1 caso não apareça
-		TFIDF_sklearn: TFIDF calculado por meio da função do scikit learn
-		TFIDF: TFIDF calculado por meio da função apresentada no artigo "MDLText: An efficient and lightweight text classifier"
-
-	stopWords: 
-		True: remove as stopwords dos textos
-		False: não remove as stopwords dos textos
-
-	stemming: 
-		True: aplica stemming nos textos
-		False: não aplica stemming nos textos
-    '''
-
-    pathDataset = 'datasets/SMSSpamCollection.txt'
-    nomeDataset = 'SMS' #vai ser usado quando for imprimir os resultados da classificação
     
+    # 'pathDataset' é o endereço da base de dados. Cada linha da base de dados, deve ter o formato <classe, mensagem>.
+    pathDataset = 'datasets/SMSSpamCollection.txt'
+    
+    # dê um nome qualquer para a base de dados para identificar o experimento no arquivo de resultados que será gerado pelo algoritmo
+    nomeDataset = 'SMS' 
+    
+    # indique o endereço onde você deseja que os resultados da classificação sejam guardados
     pathResults = 'resultados/results.csv'
     
+    # termWeighting: usado para indicar qual esquema de pesos você quer usar para os termos
+    #     Possíveis valores: 'TF', 'binary', 'TFIDF_sklearn', 'TFIDF'
+    #          'TF': term frequency 
+    #          'binary': os pesos dos termos são 0 se o termo aparece no texto ou 1 caso não apareça
+    #          'TFIDF_sklearn': TFIDF calculado por meio da função do scikit learn
+    #          'TFIDF': TFIDF calculado por meio da função apresentada no artigo "MDLText: An efficient and lightweight text classifier"
     termWeighting = 'TFIDF_sklearn' 
+    
+    # stopWords: 
+    #    Possíveis valores: True, False
+	#	       True: remove as stopwords dos textos
+	#	       False: não remove as stopwords dos textos
     stopWords = True;
+
+    # stemming: 
+    #    Possíveis valores: True, False
+	#	       True: aplica stemming nos textos
+	#	       False: não aplica stemming nos textos   
     stemming = True;
     
+    # função usada para importar a base de dados. 
+    # Essa função retorna as seguintes variáveis:
+    #      dataset: um array de 1 coluna, onde cada linha corresponde a uma mensagem 
+    #      target: um vetor com as classes de cada mensagem contida no array "dataset"
     dataset, target = import_dataset(pathDataset)
     
+    # crie uma lista com os métodos que você deseja executar:
+    #      'M.NB': Multinomial naive Bayes
+    #      'SVM': Support vector machines
+    #      'DT': Decision trees
+    #      'LR': Logistic regression
+    #      'KNN': k-nearest neighbors
+    #      'RF': Random forest
+    #      'bagging': Bagging
+    #      'adaboost': AdaBoost
+    #
+    # Você pode adicionar outros métodos na função "return_classifier" 
     metodos = ['M.NB','SVM','DT','LR','KNN','RF','bagging','adaboost'] 
     
+    # Para cada método da lista de métodos, executa um experimento com os parâmetros informados
     for methodName in metodos:
-        print('%s' %(methodName))
+        print('%s' %(methodName)) #imprimi o nome do método que será executado nessa iteração
         perform_experiment(dataset, target, methodName, nomeDataset, pathResults, stopWords, stemming, termWeighting)
     
 if __name__ == "__main__":
