@@ -34,10 +34,10 @@ def main():
     # importa o arquivo e guarda em um data frame do Pandas
     df_dataset = pd.read_csv( pathDataset, sep=',') 
     
-    # remove a coluna 'Class' e pega os valores das colunas restantes no formato de um array numpy
+    # remove a coluna 'class' do data frame e pega os valores das colunas restantes no formato de um array numpy
     dataset = df_dataset.drop(['class'], axis=1).values 
     
-    # pega os valores da coluna Class e converte para o formato array numpy
+    # pega os valores da coluna 'class' e converte para o formato array numpy
     target = df_dataset['class'].values 
     
     # crie uma lista com os métodos que você deseja executar:
