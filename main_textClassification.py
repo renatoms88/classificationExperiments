@@ -146,13 +146,30 @@ def perform_experiment(dataset, target, methodName, nomeDataset, stopWords, stem
     myFunctions.imprimiResultados(resultados,classesDataset,pathResults,auxMethod,nomeDataset)
     
 if __name__ == "__main__":
-    
+    '''
+    Parâmetros:
+
+	termWeighting:
+		TF: term frequency 
+		binary: os pesos dos termos são 0 se o termo aparece no texto ou 1 caso não apareça
+		TFIDF_sklearn: TFIDF calculado por meio da função do scikit learn
+		TFIDF: TFIDF calculado por meio da função apresentada no artigo "MDLText: An efficient and lightweight text classifier"
+
+	stopWords: 
+		True: remove as stopwords dos textos
+		False: não remove as stopwords dos textos
+
+	stemming: 
+		True: aplica stemming nos textos
+		False: não aplica stemming nos textos
+    '''
+
     pathDataset = 'datasets/SMSSpamCollection.txt'
     nomeDataset = 'SMS' #vai ser usado quando for imprimir os resultados da classificação
     
     pathResults = 'resultados/results.csv'
     
-    termWeighting = 'TFIDF_sklearn'
+    termWeighting = 'TFIDF_sklearn' 
     stopWords = True;
     stemming = True;
     
