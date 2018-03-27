@@ -173,14 +173,14 @@ def main():
     
     # stopWords: 
     #    Possíveis valores: True, False
-	#	       True: remove as stopwords dos textos
-	#	       False: não remove as stopwords dos textos
+    #	       True: remove as stopwords dos textos
+    #	       False: não remove as stopwords dos textos
     stopWords = True;
 
     # stemming: 
     #    Possíveis valores: True, False
-	#	       True: aplica stemming nos textos
-	#	       False: não aplica stemming nos textos   
+    #	       True: aplica stemming nos textos
+    #	       False: não aplica stemming nos textos   
     stemming = True;
     
     # função usada para importar a base de dados. 
