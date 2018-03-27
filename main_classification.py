@@ -18,27 +18,51 @@ import myFunctions
 
 from sklearn.model_selection import StratifiedKFold
 
-def import_dataset(pathDataset):
+def main(): 
+    # pathDataset: é o endereço da base de dados. A base de dados precisa estar no formato CSV.
+    # A primeira linha dessa base deve conter o nome dos atributos. A última coluna deve conter
+    # o nome "class" e conter as classes do problema.
+    pathDataset = 'datasets/iris.csv'
     
-    datasetFile = open(pathDataset,'r') #abre arquivo para leitura
+    # dê um nome qualquer para a base de dados para identificar o experimento no arquivo de resultados que será gerado pelo algoritmo    
+    nomeDataset = 'iris'
     
-    dataset = [] #lista vazia que ira guardar as mensagens
-    target = []
-    for line in datasetFile:
-        splitLine = line.split(',')
-        
-        classe = splitLine[0] 
-        texto = ' '.join(splitLine[1::])
-        
-        target.append(classe)
-        dataset.append(texto)
-        
-        #print('%s - %s' %(classe,texto))
+    # indique o endereço do arquivo onde você deseja que os resultados da classificação sejam guardados.
+    # Se o arquivo indicado não existir, ele será criado. Caso já exista, os resultados serão acrescentados ao fim do arquivo.
+    pathResults = 'resultados/results.csv'
+       
+    # importa o arquivo e guarda em um data frame do Pandas
+    df_dataset = pd.read_csv( pathDataset, sep=',') 
     
-    target = np.asarray(target) #convert a lista para uma array do numpy
-    dataset = np.asarray(dataset) #convert a lista para uma array do numpy
+    # remove a coluna 'Class' e pega os valores das colunas restantes no formato de um array numpy
+    dataset = df_dataset.drop(['class'], axis=1).values 
+    
+    # pega os valores da coluna Class e converte para o formato array numpy
+    target = df_dataset['class'].values 
+    
+    # crie uma lista com os métodos que você deseja executar:
+    #      'M.NB': Multinomial naive Bayes
+    #      'SVM': Support vector machines
+    #      'DT': Decision trees
+    #      'LR': Logistic regression
+    #      'KNN': k-nearest neighbors
+    #      'RF': Random forest
+    #      'bagging': Bagging
+    #      'adaboost': AdaBoost
+    #
+    # Você pode adicionar outros métodos na função "return_classifier()" 
+    metodos = ['G.NB','SVM','DT','LR','KNN','RF','bagging','adaboost'] 
+
+    # Para cada método da lista de métodos, executa um experimento com os parâmetros informados    
+    for methodName in metodos:
+        # imprimi o nome do método que será executado nessa iteração
+        print('\n\n\n########################################')
+        print('%s' %(methodName)) 
+        print('########################################\n')
+              
+        # executa um experimento com o método da iteração atual
+        perform_experiment(dataset, target, methodName, nomeDataset, pathResults)
         
-    return dataset, target
    
 def return_classifier(method):
 
@@ -125,33 +149,6 @@ def perform_experiment(dataset, target, methodName, nomeDataset, pathResults):
         
     auxMethod = methodName
     myFunctions.imprimiResultados(resultados,classesDataset,pathResults,auxMethod,nomeDataset)
-
-def main(): 
-    '''
-    Parâmetros:
-
-	pathResults: é o endereço da base de dados. A base de dados precisa estar no formato CSV.
-                 A primeira linha dessa base deve conter o nome dos atributos. A última coluna
-                 deve ter o nome "class" e conter as classes do problema.
-    '''  
-          
-    pathDataset = 'datasets/iris.csv'
-    nomeDataset = 'iris' #vai ser usado quando for imprimir os resultados da classificação
-    
-    pathResults = 'resultados/results.csv'
-       
-    df_dataset = pd.read_csv( pathDataset, sep=',') 
-    
-    dataset = df_dataset.drop(['class'], axis=1).values #remove a coluna 'Class' e pega os valores das colunas restantes no formato de um array numpy
-    target = df_dataset['class'].values #pega os valores da coluna Class e converte para o formato array numpy
-    
-    metodos = ['G.NB','SVM','DT','LR','KNN','RF','bagging','adaboost'] 
-    
-    for methodName in metodos:
-        print('\n\n\n########################################')
-        print('%s' %(methodName))
-        print('########################################\n')
-        perform_experiment(dataset, target, methodName, nomeDataset, pathResults)
         
 if __name__ == "__main__":
     
