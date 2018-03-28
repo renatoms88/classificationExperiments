@@ -169,13 +169,13 @@ def perform_experiment(dataset, target, methodName, nomeDataset, pathResults):
     Função usada para executar os experimentos
     """
     
-    classesDataset = list(set(target)) #possiveis classes da base de dados
+    classesDataset = list(set(target)) # possiveis classes da base de dados
     
-    #divide a base de dados usando validacao cruzada k-folds
+    # divide a base de dados usando validacao cruzada k-folds
     cv = skl.model_selection.StratifiedKFold(n_splits=5, shuffle=True, random_state = 0)
     
-    resultados=[]
-    i=0
+    resultados=[] # cria uma lista vazia para guardar os resultados obtidos em cada fold
+    i=0 
     for train_index, test_index in cv.split(dataset, target):
         print('\n\t==============================================')
         print('\tK-folds: %d' %(i+1))

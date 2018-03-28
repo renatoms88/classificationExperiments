@@ -221,14 +221,14 @@ def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, st
     
     classesDataset = list(set(target)) #possiveis classes da base de dados
     
-    #realiza as etapas de pre-processamento na base de dados
+    # realiza as etapas de pre-processamento na base de dados
     for i in range( len(dataset) ):
         dataset[i] = textProcessor.trataTexto(dataset[i], stopWords = stopWords, stemming = stemming, corpusLanguage = 'english')
     
-    #divide a base de dados usando validacao cruzada k-folds
+    # divide a base de dados usando validacao cruzada k-folds
     cv = skl.model_selection.StratifiedKFold(n_splits=5, shuffle=True, random_state = 0)
     
-    resultados=[]
+    resultados=[]  # cria uma lista vazia para guardar os resultados obtidos em cada fold
     i=0
     for train_index, test_index in cv.split(dataset, target):
         print('\n\t==============================================')
@@ -238,19 +238,30 @@ def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, st
         dataset_train, dataset_test = dataset[train_index], dataset[test_index]
         y_train, y_test = target[train_index], target[test_index]
         
-        #Convert a collection of text documents to a matrix of token counts
+        # inicia o modelo usado para gerar a representação TF (term frequency)
         vectorizer = skl.feature_extraction.text.CountVectorizer(analyzer = "word", tokenizer = None, preprocessor = None, stop_words = None, lowercase = True, binary=False, dtype=np.int32 )
+        
+        # treina o modelo TF com os dados de treinamento e converte os dados de treinamento para uma array que contém a frequência dos termos em cada documento (TF - term frequency)
         x_train = vectorizer.fit_transform(dataset_train) 
+        
+        # converte os dados de teste para uma array que contém a frequência dos termos em cada documento (TF - term frequency)
         x_test = vectorizer.transform(dataset_test) #converte os dados de teste, usando o modelo gerado pelos dados de treinamento 
-                
+        
+        # converte a representação TF para binária ou TF-IDF  
+        #
+        # nesse primeiro if, ele converte TF para TFIDF usando a função do scikit-learn
         if termWeighting == 'TFIDF_sklearn':    
             tfidf_model = skl.feature_extraction.text.TfidfTransformer(norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False)
             x_train = tfidf_model.fit_transform(x_train)
             x_test = tfidf_model.transform(x_test)
-        elif termWeighting == 'TFIDF':  #TFIDF calculado de forma diferente do scikit learn, conforme feito no artigo "MDLText: An efficient and lightweight text classifier" 
+            
+        # converte TF para TFIDF usando uma equação um pouco diferente do scikit learn. Veja o artigo "MDLText: An efficient and lightweight text classifier" 
+        elif termWeighting == 'TFIDF':  
             tfidf_model = textProcessor.tf2tfidf(normalize_tf=True, normalize_tfidf=True)
             x_train = tfidf_model.fit_transform(x_train)
             x_test = tfidf_model.transform(x_test)
+            
+        # converte TF para binário
         elif termWeighting == 'binary':
             x_train[x_train!=0]=1 #convert os dados para representação binária
             x_test[x_test!=0]=1 #convert os dados para representação binária
