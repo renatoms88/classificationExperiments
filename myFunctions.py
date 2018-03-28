@@ -16,6 +16,9 @@ import sys
 #Função para calcular as métricas de classificação
 #==================================================
 def inf_teste(matriz_confusao, classes, printResults=True):
+  """
+  Função usada calcular as medidas de desempenho da classificação.
+  """
   #print(matriz_confusao)
   
   n_teste = sum(sum(matriz_confusao))
@@ -107,6 +110,35 @@ def inf_teste(matriz_confusao, classes, printResults=True):
 #Função para imprimir as médias dos folds
 #============================================
 def imprimiResultados(resultados,classes,end_resultados,metodo,nomeDataset,print_class=None):
+    """
+    Salva os resultados da classificação em formato CSV. Se o arquivo indicado pela variável 'pathResults' 
+    não existir, ele será criado. Caso já exista, os resultados serão acrescentados ao fim do arquivo.
+
+    Parameters:
+    -----------
+    resultados: list
+        Uma lista com os desempenhos obtidos em cada rodada da validação cruzada.
+        
+    classes: list or array
+        Uma lista com as possíveis classes do problema.
+        
+    end_resultados: string
+        Endereço do arquivo onde você deseja que os resultados da classificação sejam guardados.
+        Se o arquivo indicado não existir, ele será criado. Caso já exista, os resultados serão acrescentados ao fim do arquivo.
+
+    metodo: string
+        Nome do método usado no experimento. 
+        
+    nomeDataset: string
+        Nome da base de dados usada no experimento.
+        
+    print_class: string
+        Essa parâmetro indica qual é a classe positiva, ou seja a classe alvo do problema. 
+        Então, caso esse parâmetro tenha valor diferente de None, as colunas "acuraciaMean", "fprMean", 
+        "sensitividadeMean" e outras colunas terminadas por "Mean" do arquivo de resultados, irão conter o 
+        desempenho calculado "não" pela média das classes, mas considerando a classe setada como positiva.
+    """
+    
     nfolds = len(resultados)
 
     if not os.path.isfile(end_resultados):#se o arquivo não existe, adiciona os labels das colunas do .csv
@@ -151,6 +183,17 @@ def imprimiResultados(resultados,classes,end_resultados,metodo,nomeDataset,print
     fileWrite.close();
 
 def labels_to_xml(labels):
+     """
+     Função usada para criar uma representação XML dos nomes das classes. 
+     Essa representação XML será usada para identificar a classe referente
+     a cada linha da matriz de confusão no arquivo de resultados.   
+     
+     Parameters:
+     -----------
+     labels: list or array
+        Uma lista com as possíveis classes do problema.
+     """
+    
      xmlString = ''
      if type(labels) is list:
          for i in range( len(labels) ):
@@ -165,7 +208,17 @@ def labels_to_xml(labels):
      return xmlString
     
 def matrix_to_xml(data):
+    """
+    Função usada para criar uma representação XML de uma matriz. 
+    Essa representação XML será usada para guardar a matriz de confusão
+    no arquivo de resultados.
     
+    Parameters:
+    -----------
+    data: array
+        Uma matriz.
+    """
+     
     xmlString = '';
     for i in range( data.shape[0] ):
         xmlString = xmlString+r'<row id="'+str(i+1)+r'">';
@@ -185,17 +238,28 @@ def matrix_to_xml(data):
 #============================================
 class tf2tfidf():
     """
-    Faz a conversão para tf_idf. 
-    Quando for usado na fase de teste, deve ser passado a frequência de documentos 
-    da base de treinamento que contém cada token e a quantidade de documentos de treinamento. 
+    Faz a conversão de TF para TF-IDF de uma forma um pouco diferente da usada pelo Scikit Learn.
     
-    Uma das diferença dessa função para a função sklearn.feature_extraction.text.TfidfVectorizer 
-    é que ela usa log na base 10 em vez do logaritmo natural. Além disso, o Tf é normalizado como 
-    np.log10( 1+tf.data ), enquanto no scikit é normalizado como 1 + np.log( tf.data ). Ainda,
+    Uma das diferença dessa função para a função do Scikit Learn é que ela usa log na base 10 
+    em vez do logaritmo natural. Além disso, o Tf é normalizado como 
+    np.log10( 1+TF ), enquanto no Scikit é normalizado como 1 + np.log( TF ). Ainda,
     o IDF é calculado como np.log10( (nDocs+1)/(df+1) ), enquanto no scikit é 
     np.log(nDocs / df) + 1.0
     
     O calculo é feito usando a equação mostrada no artigo "MDLText: An efficient and lightweight text classifier" 
+    
+    Parameters:
+    -----------
+    tf: array
+        Uma array contendo a frequencia de cada termo em cada documento (TF - term frequency) 
+      
+    normalize_tf: boolean
+        True: normaliza os pesos TF usando a equação np.log10( 1+TF )
+        False: não normaliza os pesos TF
+        
+    normalize_tfidf: boolean
+        True: normaliza os pesos TF-IDF usando a norma L2
+        False: não normaliza os pesos TF-IDF
     """    
 
     def __init__(self, normalize_tf=False, normalize_tfidf=True):

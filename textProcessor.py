@@ -26,7 +26,30 @@ import unicodedata #remover acentos
 
 #funcao para tratar o texto
 def trataTexto(text, stopWords = False, stemming = False, regexType = 0, corpusLanguage = 'english'):
+    """
+    Realiza as etapas de pre-processamento no texto, tais como stemming e remoção de stopWords
     
+    Parameters:
+    -----------
+    text: string
+        O texto que será tratado. 
+
+    stopWords: boolean
+        True: remove as stopwords dos textos
+        False: não remove as stopwords dos textos
+
+    stemming: boolean
+        True: aplica stemming no texto
+        False: não aplica stemming no texto
+
+    regexType: integer
+        0: qualquer caractere que não seja alfanumérico ou underline é substituido pelo caractere espaço
+        1: qualquer caractere que não seja alfabético é substituido pelo caractere espaço  
+
+    corpusLanguage: string
+        Indica qual o idioma do texto. Algumas etapas de processamento, como stopwords ou stemming podem ser prejudicadas se for considerado um idioma incorreto.      
+    """ 
+   
     if regexType==0:
         regex = re.compile('\W') #Matches any single letter, digit or underscore
     elif regexType==1: 
@@ -71,7 +94,17 @@ def trataTexto(text, stopWords = False, stemming = False, regexType = 0, corpusL
     return text
 
 #function to remove accents, umlauts, etc  
-def remove_accents(text):  
-	nfkd_form = unicodedata.normalize('NFKD', text)
-	return u"".join([c for c in nfkd_form if not unicodedata.combining(c)])
+def remove_accents(text): 
+    """
+    Função usada para remover acentos no texto. Exemplos: "à" se torna "a"; "á" se torna "a".
+    
+    Parameters:
+    -----------
+    text: string
+        O texto que será tratado. 
+    """
+    
+    nfkd_form = unicodedata.normalize('NFKD', text)
+    
+    return u"".join([c for c in nfkd_form if not unicodedata.combining(c)])
 
