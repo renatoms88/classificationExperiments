@@ -94,6 +94,12 @@ def main():
 def import_dataset(pathDataset):
     """
     Função usada para importar a base de dados textual
+    
+    Parameters:
+    -----------
+    pathDataset: string
+        É o endereço da base de dados. Cada linha da base de dados, deve ter o formato <classe, mensagem>.
+        
     """
      
     datasetFile = open(pathDataset,'r') #abre arquivo para leitura
@@ -119,7 +125,21 @@ def import_dataset(pathDataset):
 def return_classifier(method):
     """
     Função usada para selecionar um método de classificação para ser usado no experimento
-    """   
+    
+    Parameters:
+    -----------
+    method: string
+        Um nome usado para identificar o método. Caso deseje, acrescente outros métodos dentro da função. 
+
+        'M.NB': Multinomial naive Bayes
+        'SVM': Support vector machines
+        'DT': Decision trees
+        'LR': Logistic regression
+        'KNN': k-nearest neighbors
+        'RF': Random forest
+        'bagging': Bagging
+        'adaboost': AdaBoost        
+    """    
 
     if method == 'M.NB': #multinomial naive Bayes
         classifier = skl.naive_bayes.MultinomialNB()   

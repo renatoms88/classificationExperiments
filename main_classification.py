@@ -71,6 +71,20 @@ def main():
 def return_classifier(method):
     """
     Função usada para selecionar um método de classificação para ser usado no experimento
+    
+    Parameters:
+    -----------
+    method: string
+        Um nome usado para identificar o método. Caso deseje, acrescente outros métodos dentro da função. 
+
+        'M.NB': Multinomial naive Bayes
+        'SVM': Support vector machines
+        'DT': Decision trees
+        'LR': Logistic regression
+        'KNN': k-nearest neighbors
+        'RF': Random forest
+        'bagging': Bagging
+        'adaboost': AdaBoost        
     """  
     
     if method == 'M.NB': #multinomial naive Bayes
