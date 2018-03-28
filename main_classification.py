@@ -88,48 +88,78 @@ def return_classifier(method):
     """  
     
     if method == 'M.NB': #multinomial naive Bayes
+        # inicia o classificador
         classifier = skl.naive_bayes.MultinomialNB()   
 
     if method == 'G.NB': #gaussian naive Bayes
+        # inicia o classificador
         classifier = skl.naive_bayes.GaussianNB()  
         
     elif method == 'SVM':
+        # inicia o classificador SVM. Os parâmetros 'C' e 'kernel' não foram indicados na função SVC(), pois serão selecionados
+        # usando uma busca em grade.
         classifier_svm = skl.svm.SVC()
+        
+        # alguns métodos (e.g. SVM, KNN e Random Forest) são sensíveis a variação de parâmetros. 
+        # Por isso, é recomendado selecionar os parâmetros usando uma busca em grade.
         param_grid = [
           {'C': [1, 10, 100, 1000], 'kernel': ['linear']},
           {'C': [1, 10, 100, 1000], 'gamma': [1e-3, 1e-4], 'kernel': ['rbf']},
         ]
         
+        # inicia o classificador SVM, implementado usando uma busca em grade
         classifier = skl.model_selection.GridSearchCV(classifier_svm, cv=5, param_grid=param_grid, scoring = 'f1_macro')       
                 
     elif method == 'DT': #Decision Trees 
+        # inicia o classificador
         classifier = skl.tree.DecisionTreeClassifier(random_state = 5)
         
     elif method == 'LR': #Logistic Regression
+        # inicia o classificador
         classifier = skl.linear_model.LogisticRegression() 
 
     elif method == 'KNN': #K nearest Neighbors 
+        # inicia o classificador. O parâmetro 'n_neighbors' não foi indicado, pois será selecionado usando busca em grade.
         classifier_knn  = skl.neighbors.KNeighborsClassifier()
+        
+        # alguns métodos (e.g. SVM, KNN e Random Forest) são sensíveis a variação de parâmetros. 
+        # Por isso, é recomendado selecionar os parâmetros usando uma busca em grade.
         param_grid = {'n_neighbors': np.arange(5,31,5)} 
         
+        # inicia o classificador KNN, implementado usando uma busca em grade
         classifier = skl.model_selection.GridSearchCV(classifier_knn, cv=5, param_grid=param_grid, scoring = 'f1_macro')
 
     elif method == 'RF': #Random Forest 
+        # inicia o classificador. O parâmetro 'n_estimators' não foi indicado, pois será selecionado usando busca em grade.
         classifier_rf = skl.ensemble.RandomForestClassifier(random_state = 5) 
+        
+        # alguns métodos (e.g. SVM, KNN e Random Forest) são sensíveis a variação de parâmetros. 
+        # Por isso, é recomendado selecionar os parâmetros usando uma busca em grade.
         param_grid = {'n_estimators': np.arange(10,101,10)} 
         
+        # inicia o classificador RF, implementado usando uma busca em grade
         classifier = skl.model_selection.GridSearchCV(classifier_rf, cv=5, param_grid=param_grid, scoring = 'f1_macro')
         
     elif method == 'bagging':  
+        # inicia o classificador. O parâmetro 'n_estimators' não foi indicado, pois será selecionado usando busca em grade.
         classifier_bagging  = skl.ensemble.BaggingClassifier()
+        
+        # alguns métodos (e.g. SVM, KNN e Random Forest) são sensíveis a variação de parâmetros. 
+        # Por isso, é recomendado selecionar os parâmetros usando uma busca em grade.
         param_grid = {'n_estimators': np.arange(10,101,10)} 
         
+        # inicia o classificador Bagging, implementado usando uma busca em grade
         classifier = skl.model_selection.GridSearchCV(classifier_bagging, cv=5, param_grid=param_grid, scoring = 'f1_macro')
 
     elif method == 'adaboost':  
+        # inicia o classificador. O parâmetro 'n_estimators' não foi indicado, pois será selecionado usando busca em grade.
         classifier_adaboost  = skl.ensemble.AdaBoostClassifier()
-        param_grid = {'n_estimators': np.arange(10,101,10)} 
         
+        # alguns métodos (e.g. SVM, KNN e Random Forest) são sensíveis a variação de parâmetros. 
+        # Por isso, é recomendado selecionar os parâmetros usando uma busca em grade.
+        param_grid = {'n_estimators': np.arange(10,101,10)} 
+
+        # inicia o classificador AdaBoost, implementado usando uma busca em grade        
         classifier = skl.model_selection.GridSearchCV(classifier_adaboost, cv=5, param_grid=param_grid, scoring = 'f1_macro')
 
     return classifier
