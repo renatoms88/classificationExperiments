@@ -27,6 +27,9 @@ from sklearn.model_selection import StratifiedKFold
 
 
 def main():
+    """
+    Função principal
+    """ 
     
     # 'pathDataset' é o endereço da base de dados. Cada linha da base de dados, deve ter o formato <classe, mensagem>.
     pathDataset = 'datasets/SMSSpamCollection.txt'
@@ -89,9 +92,10 @@ def main():
 
 
 def import_dataset(pathDataset):
-    '''
+    """
     Função usada para importar a base de dados textual
-    '''      
+    """
+     
     datasetFile = open(pathDataset,'r') #abre arquivo para leitura
     
     dataset = [] #lista vazia que ira guardar as mensagens
@@ -113,9 +117,9 @@ def import_dataset(pathDataset):
     return dataset, target
    
 def return_classifier(method):
-    '''
+    """
     Função usada para selecionar um método de classificação para ser usado no experimento
-    '''   
+    """   
 
     if method == 'M.NB': #multinomial naive Bayes
         classifier = skl.naive_bayes.MultinomialNB()   
@@ -162,9 +166,10 @@ def return_classifier(method):
     return classifier
 
 def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, stopWords, stemming, termWeighting):
-    '''
+    """
     Função usada para executar os experimentos
-    '''    
+    """
+    
     classesDataset = list(set(target)) #possiveis classes da base de dados
     
     #realiza as etapas de pre-processamento na base de dados

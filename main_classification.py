@@ -18,7 +18,11 @@ import myFunctions
 
 from sklearn.model_selection import StratifiedKFold
 
-def main(): 
+def main():
+    """
+    Função principal
+    """  
+    
     # pathDataset: é o endereço da base de dados. A base de dados precisa estar no formato CSV.
     # A primeira linha dessa base deve conter o nome dos atributos. A última coluna deve conter
     # o nome "class" e conter as classes do problema.
@@ -65,7 +69,10 @@ def main():
         
    
 def return_classifier(method):
-
+    """
+    Função usada para selecionar um método de classificação para ser usado no experimento
+    """  
+    
     if method == 'M.NB': #multinomial naive Bayes
         classifier = skl.naive_bayes.MultinomialNB()   
 
@@ -114,6 +121,9 @@ def return_classifier(method):
     return classifier
 
 def perform_experiment(dataset, target, methodName, nomeDataset, pathResults):
+    """
+    Função usada para executar os experimentos
+    """
     
     classesDataset = list(set(target)) #possiveis classes da base de dados
     
