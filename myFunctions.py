@@ -83,7 +83,7 @@ def inf_teste(matriz_confusao, classes, printResults=True):
       for i in range(0,nClasses):
         print('\t%1.3f      %1.3f      %1.3f    %1.3f      %1.3f      %s' % (fpr[0,i], sensitividade[0,i], especificidade[0,i], precisao[0,i], f_medida[0,i],classes[i] ) )
     
-      print('\t------------------------------------------------------------------------------------');
+      print('\t---------------------------------------------------------------------');
       #imprimi as médias
       print('\t%1.3f      %1.3f      %1.3f    %1.3f      %1.3f      Media' % (np.mean(fpr), np.mean(sensitividade), np.mean(especificidade), np.mean(precisao), np.mean(f_medida) ) )
       print('\t.....      %1.3f      .....    %1.3f      %1.3f      Macro-Average' % (sensitividade_macroAverage, precisao_macroAverage, f_medida_macroAverage) )
@@ -180,3 +180,74 @@ def matrix_to_xml(data):
     return xmlString
 
 
+#============================================
+#Classe para converter tf para tf-idf
+#============================================
+class tf2tfidf():
+    """
+    Faz a conversão para tf_idf. 
+    Quando for usado na fase de teste, deve ser passado a frequência de documentos 
+    da base de treinamento que contém cada token e a quantidade de documentos de treinamento. 
+    
+    Uma das diferença dessa função para a função sklearn.feature_extraction.text.TfidfVectorizer 
+    é que ela usa log na base 10 em vez do logaritmo natural. Além disso, o Tf é normalizado como 
+    np.log10( 1+tf.data ), enquanto no scikit é normalizado como 1 + np.log( tf.data ). Ainda,
+    o IDF é calculado como np.log10( (nDocs+1)/(df+1) ), enquanto no scikit é 
+    np.log(nDocs / df) + 1.0
+    
+    O calculo é feito usando a equação mostrada no artigo "MDLText: An efficient and lightweight text classifier" 
+    """    
+
+    def __init__(self, normalize_tf=False, normalize_tfidf=True):
+        self.df = None
+        self.nDocs = None
+        self.normalize_tf = False
+        self.normalize_tfidf = True
+    
+    def fit_transform(self,tf):
+        """
+        Fit to data, then transform it to a tf-idf matrix
+        """
+        
+        #se não é esparsa, converte em esparsa
+        if not scipy.sparse.issparse(tf):
+            tf = csc_matrix(tf)
+            
+        if self.df is None:    
+            self.df = (tf != 0).sum(axis=0) #document frequency -- number of documents where term i occurs
+        else:
+            self.df += (tf != 0).sum(axis=0) #document frequency -- number of documents where term i occurs
+            
+        if self.nDocs is None:   
+            self.nDocs = tf.shape[0] 
+        else:
+            self.nDocs += tf.shape[0]
+
+        tf_idf = self.transform(tf)
+        return tf_idf
+    
+    def transform(self,tf):
+        """
+        Transform a TF matrix to a tf-idf matrix
+        """
+         #se não é esparsa, converte em esparsa
+        if not scipy.sparse.issparse(tf):
+            tf = csc_matrix(tf)
+            
+        if self.normalize_tf == True:
+            tf.data = np.log10( 1.0+tf.data )
+        
+        idf = np.log10( (self.nDocs+1.0)/(self.df+1.0) ) #-- we add 1 to avoid 0 division
+        idf = csc_matrix(idf);
+        
+        #tf_idf = csc_matrix( (tf.shape) )
+        
+        tf_idf = tf.multiply(idf)
+            
+        #tf_idf = np.nan_to_num(tf_idf) #Replace nan with zero and inf with finite numbers
+        #tf_idf2 = csc_matrix(tf_idf)  
+            
+        if self.normalize_tfidf==True:
+            tf_idf = skl.preprocessing.normalize(tf_idf, norm='l2')
+            
+        return tf_idf    

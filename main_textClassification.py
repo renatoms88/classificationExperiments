@@ -21,7 +21,7 @@ from nltk.stem import RSLPStemmer #portuguese
 from nltk.stem import snowball #other languages
 
 import textProcessor
-import myFunctions 
+import myFunctions
 
 from sklearn.model_selection import StratifiedKFold
 
@@ -257,7 +257,7 @@ def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, st
             
         # converte TF para TFIDF usando uma equação um pouco diferente do scikit learn. Veja o artigo "MDLText: An efficient and lightweight text classifier" 
         elif termWeighting == 'TFIDF':  
-            tfidf_model = textProcessor.tf2tfidf(normalize_tf=True, normalize_tfidf=True)
+            tfidf_model = myFunctions.tf2tfidf(normalize_tf=True, normalize_tfidf=True)
             x_train = tfidf_model.fit_transform(x_train)
             x_test = tfidf_model.transform(x_test)
             
