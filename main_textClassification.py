@@ -78,7 +78,7 @@ def main():
     #      'adaboost': AdaBoost
     #
     # Você pode adicionar outros métodos na função "return_classifier()" 
-    metodos = ['M.NB'] #['M.NB','SVM','DT','LR','KNN','RF','bagging','adaboost'] 
+    metodos = ['M.NB','SVM','DT','LR','KNN','RF','bagging','adaboost'] 
     
     # Para cada método da lista de métodos, executa um experimento com os parâmetros informados
     for methodName in metodos:
@@ -221,8 +221,8 @@ def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, st
     
     classesDataset = list(set(target)) #possiveis classes da base de dados
     
-    # realiza as etapas de pre-processamento na base de dados
     for i in range( len(dataset) ):
+        # realiza as etapas de pre-processamento no texto, tais como stemming e remoção de stopWords
         dataset[i] = textProcessor.trataTexto(dataset[i], stopWords = stopWords, stemming = stemming, corpusLanguage = 'english')
     
     # divide a base de dados usando validacao cruzada k-folds
@@ -266,18 +266,32 @@ def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, st
             x_train[x_train!=0]=1 #convert os dados para representação binária
             x_test[x_test!=0]=1 #convert os dados para representação binária
         
+        # chama a função para retornar um classificador baseado no nome fornecido como parâmetro
         classifier = return_classifier(methodName)
-        classifier.fit(x_train, y_train) #treina o classificador com os dados de treinameto
-        y_pred = classifier.predict(x_test) #classifica os dados de teste
+        
+        # treina o classificador com os dados de treinameto
+        classifier.fit(x_train, y_train) 
+        
+        #classifica os dados de teste
+        y_pred = classifier.predict(x_test) 
         
         # Compute confusion matrix
         cm = skl.metrics.confusion_matrix(y_test, y_pred, classesDataset)
+        
+        # chama a função 'inf_teste' para calcular e retornar o desempenho da classificação. 
+        # Essa função calcula a acurácia, F-medida, Precisão e várias outras medidas.
         auxResults = myFunctions.inf_teste(cm, classesDataset, printResults=True)
+        
+        # adiciona os resultados do fold atual na lista de resultados
         resultados.append( auxResults ) 
                
         i+=1
-        
+    
+    # une o nome do método ao nome do esquema de pesos usados para facilitar a identificação do experimento no arquivo de resultados    
     auxMethod = methodName+'_'+termWeighting
+    
+    # a função 'imprimiResultados' salva os resultados da classificação em formato CSV.
+    # Se o arquivo indicado pela variável 'pathResults' não existir, ele será criado. Caso já exista, os resultados serão acrescentados ao fim do arquivo.
     myFunctions.imprimiResultados(resultados,classesDataset,pathResults,auxMethod,nomeDataset)
         
 if __name__ == "__main__":

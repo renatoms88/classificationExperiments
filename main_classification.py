@@ -185,24 +185,35 @@ def perform_experiment(dataset, target, methodName, nomeDataset, pathResults):
         y_train, y_test = target[train_index], target[test_index]
         
           
-        #aplica normalização nos dados
+        # Standardize features by removing the mean and scaling to unit variance
         scaler = skl.preprocessing.StandardScaler().fit(x_train)
         x_train= scaler.transform(x_train)
         x_test = scaler.transform(x_test)
         
+        # chama a função para retornar um classificador baseado no nome fornecido como parâmetro
         classifier = return_classifier(methodName)
-        classifier.fit(x_train, y_train) #treina o classificador com os dados de treinameto
-        y_pred = classifier.predict(x_test) #classifica os dados de teste
+        
+        # treina o classificador com os dados de treinameto
+        classifier.fit(x_train, y_train) 
+        
+        # classifica os dados de teste
+        y_pred = classifier.predict(x_test) 
         
         # Compute confusion matrix
         cm = skl.metrics.confusion_matrix(y_test, y_pred, classesDataset)
+        
+        # chama a função 'inf_teste' para calcular e retornar o desempenho da classificação. 
+        # Essa função calcula a acurácia, F-medida, Precisão e várias outras medidas.
         auxResults = myFunctions.inf_teste(cm, classesDataset, printResults=True)
+        
+        # adiciona os resultados do fold atual na lista de resultados
         resultados.append( auxResults ) 
                
         i+=1
         
-    auxMethod = methodName
-    myFunctions.imprimiResultados(resultados,classesDataset,pathResults,auxMethod,nomeDataset)
+    # a função 'imprimiResultados' salva os resultados da classificação em formato CSV.
+    # Se o arquivo indicado pela variável 'pathResults' não existir, ele será criado. Caso já exista, os resultados serão acrescentados ao fim do arquivo.
+    myFunctions.imprimiResultados(resultados,classesDataset,pathResults,methodName,nomeDataset)
         
 if __name__ == "__main__":
     
