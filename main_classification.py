@@ -182,6 +182,37 @@ def return_classifier(method, performGrid):
 def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, performGrid):
     """
     Função usada para executar os experimentos
+    
+    Parameters:
+    -----------
+    dataset: array
+        É um array com dimensão "m x n", onde "m" é o número de amostras e "n" é o número de atributos
+
+    target: array
+        É uma lista ou um vetor contendo as classes de cada amostra
+    
+    methodName: string
+        Um nome usado para identificar o método. Caso deseje, acrescente outros métodos dentro da função return_classifier(). 
+
+        'M.NB': Multinomial naive Bayes
+        'SVM': Support vector machines
+        'DT': Decision trees
+        'LR': Logistic regression
+        'KNN': k-nearest neighbors
+        'RF': Random forest
+        'bagging': Bagging
+        'adaboost': AdaBoost 
+        
+    nomeDataset: string
+        Nome da base de dados que será usado para identificar o experimento no arquivo de resultados que será gerado pelo algoritmo
+        
+    pathResults: string
+        Endereço do arquivo onde você deseja que os resultados da classificação sejam guardados.
+        Se o arquivo indicado não existir, ele será criado. Caso já exista, os resultados serão acrescentados ao fim do arquivo.
+        
+    performGrid: boolean
+    	       True: usa grid search (busca em grade) nos métodos (e.g. SVM, KNN e Random Forest) que são sensíveis a variação de parâmetros.
+    	       False: não usa grid search em nenhum método          
     """
     
     classesDataset = list(set(target)) # possiveis classes da base de dados

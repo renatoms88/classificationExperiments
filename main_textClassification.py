@@ -104,8 +104,7 @@ def import_dataset(pathDataset):
     Parameters:
     -----------
     pathDataset: string
-        É o endereço da base de dados. Cada linha da base de dados, deve ter o formato <classe, mensagem>.
-        
+        É o endereço da base de dados. Cada linha da base de dados, deve ter o formato <classe, mensagem>.        
     """
      
     datasetFile = open(pathDataset,'r') #abre arquivo para leitura
@@ -232,6 +231,53 @@ def return_classifier(method, performGrid):
 def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, performGrid, stopWords, stemming, termWeighting):
     """
     Função usada para executar os experimentos
+
+    Parameters:
+    -----------
+    dataset: 
+        Um array de 1 coluna, onde cada linha corresponde a uma mensagem 
+    
+    target:
+        Um vetor com as classes de cada mensagem contida no array "dataset"
+
+    methodName: string
+        Um nome usado para identificar o método. Caso deseje, acrescente outros métodos dentro da função return_classifier(). 
+
+        'M.NB': Multinomial naive Bayes
+        'SVM': Support vector machines
+        'DT': Decision trees
+        'LR': Logistic regression
+        'KNN': k-nearest neighbors
+        'RF': Random forest
+        'bagging': Bagging
+        'adaboost': AdaBoost 
+        
+    nomeDataset: string
+        Nome da base de dados que será usado para identificar o experimento no arquivo de resultados que será gerado pelo algoritmo
+        
+    pathResults: string
+        Endereço do arquivo onde você deseja que os resultados da classificação sejam guardados.
+        Se o arquivo indicado não existir, ele será criado. Caso já exista, os resultados serão acrescentados ao fim do arquivo.
+        
+    performGrid: boolean
+    	       True: usa grid search (busca em grade) nos métodos (e.g. SVM, KNN e Random Forest) que são sensíveis a variação de parâmetros.
+    	       False: não usa grid search em nenhum método  
+               
+    stopWords: boolean
+        True: remove as stopwords dos textos
+        False: não remove as stopwords dos textos
+
+    stemming: boolean
+        True: aplica stemming no texto
+        False: não aplica stemming no texto
+        
+    termWeighting: string
+        Usado para indicar qual esquema de pesos você quer usar para os termos
+        Possíveis valores: 'TF', 'binary', 'TFIDF_sklearn', 'TFIDF'
+              'TF': term frequency 
+              'binary': os pesos dos termos são 0 se o termo aparece no texto ou 1 caso não apareça
+              'TFIDF_sklearn': TFIDF calculado por meio da função do scikit learn
+              'TFIDF': TFIDF calculado por meio da função apresentada no artigo "MDLText: An efficient and lightweight text classifier"
     """
     
     classesDataset = list(set(target)) #possiveis classes da base de dados
