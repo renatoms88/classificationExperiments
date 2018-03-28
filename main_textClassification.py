@@ -40,6 +40,12 @@ def main():
     # indique o endereço do arquivo onde você deseja que os resultados da classificação sejam guardados.
     # Se o arquivo indicado não existir, ele será criado. Caso já exista, os resultados serão acrescentados ao fim do arquivo.
     pathResults = 'resultados/results.csv'
+
+    # performGrid: 
+    #    Possíveis valores: True, False
+    #	       True: usa grid search (busca em grade) nos métodos (e.g. SVM, KNN e Random Forest) que são sensíveis a variação de parâmetros.
+    #	       False: não usa grid search em nenhum método 
+    performGrid = True
     
     # termWeighting: usado para indicar qual esquema de pesos você quer usar para os termos
     #     Possíveis valores: 'TF', 'binary', 'TFIDF_sklearn', 'TFIDF'
@@ -88,7 +94,7 @@ def main():
         print('########################################\n')
         
         # executa um experimento com o método da iteração atual
-        perform_experiment(dataset, target, methodName, nomeDataset, pathResults, stopWords, stemming, termWeighting)
+        perform_experiment(dataset, target, methodName, nomeDataset, pathResults, performGrid, stopWords, stemming, termWeighting)
 
 
 def import_dataset(pathDataset):
@@ -122,7 +128,7 @@ def import_dataset(pathDataset):
         
     return dataset, target
    
-def return_classifier(method):
+def return_classifier(method, performGrid):
     """
     Função usada para selecionar um método de classificação para ser usado no experimento
     
@@ -138,27 +144,32 @@ def return_classifier(method):
         'KNN': k-nearest neighbors
         'RF': Random forest
         'bagging': Bagging
-        'adaboost': AdaBoost        
+        'adaboost': AdaBoost 
+        
+    performGrid: boolean
+    	       True: usa grid search (busca em grade) nos métodos (e.g. SVM, KNN e Random Forest) que são sensíveis a variação de parâmetros.
+    	       False: não usa grid search em nenhum método  
     """    
 
     if method == 'M.NB': #multinomial naive Bayes
-        # inicia o classificador
+        # inicia o classificador com os parâmetros default do Scikit
         classifier = skl.naive_bayes.MultinomialNB()   
         
     elif method == 'SVM':
-        # inicia o classificador SVM. Os parâmetros 'C' e 'kernel' não foram indicados na função SVC(), pois serão selecionados
-        # usando uma busca em grade.
-        classifier_svm = skl.svm.SVC()
+        # inicia o classificador com os parâmetros default do Scikit
+        classifier = skl.svm.SVC()
         
         # alguns métodos (e.g. SVM, KNN e Random Forest) são sensíveis a variação de parâmetros. 
         # Por isso, é recomendado selecionar os parâmetros usando uma busca em grade.
-        param_grid = [
-          {'C': [1, 10, 100, 1000], 'kernel': ['linear']},
-          {'C': [1, 10, 100, 1000], 'gamma': [1e-3, 1e-4], 'kernel': ['rbf']},
-        ]
-        
-        # inicia o classificador SVM, implementado usando uma busca em grade
-        classifier = skl.model_selection.GridSearchCV(classifier_svm, cv=5, param_grid=param_grid, scoring = 'f1_macro')       
+        if performGrid:
+            
+            param_grid = [
+              {'C': [1, 10, 100, 1000], 'kernel': ['linear']},
+              {'C': [1, 10, 100, 1000], 'gamma': [1e-3, 1e-4], 'kernel': ['rbf']},
+            ]
+            
+            # inicia o classificador SVM, implementado usando uma busca em grade
+            classifier = skl.model_selection.GridSearchCV(classifier, cv=5, param_grid=param_grid, scoring = 'f1_macro')       
                 
     elif method == 'DT': #Decision Trees 
         # inicia o classificador
@@ -169,52 +180,56 @@ def return_classifier(method):
         classifier = skl.linear_model.LogisticRegression() 
 
     elif method == 'KNN': #K nearest Neighbors 
-        # inicia o classificador. O parâmetro 'n_neighbors' não foi indicado, pois será selecionado usando busca em grade.
-        classifier_knn  = skl.neighbors.KNeighborsClassifier()
+        # inicia o classificador com os parâmetros default do Scikit
+        classifier  = skl.neighbors.KNeighborsClassifier()
         
         # alguns métodos (e.g. SVM, KNN e Random Forest) são sensíveis a variação de parâmetros. 
         # Por isso, é recomendado selecionar os parâmetros usando uma busca em grade.
-        param_grid = {'n_neighbors': np.arange(5,31,5)} 
-        
-        # inicia o classificador KNN, implementado usando uma busca em grade
-        classifier = skl.model_selection.GridSearchCV(classifier_knn, cv=5, param_grid=param_grid, scoring = 'f1_macro')
+        if performGrid:
+            param_grid = {'n_neighbors': np.arange(5,31,5)} 
+            
+            # inicia o classificador KNN, implementado usando uma busca em grade
+            classifier = skl.model_selection.GridSearchCV(classifier, cv=5, param_grid=param_grid, scoring = 'f1_macro')
 
     elif method == 'RF': #Random Forest 
-        # inicia o classificador. O parâmetro 'n_estimators' não foi indicado, pois será selecionado usando busca em grade.
-        classifier_rf = skl.ensemble.RandomForestClassifier(random_state = 5) 
+        # inicia o classificador com os parâmetros default do Scikit
+        classifier = skl.ensemble.RandomForestClassifier(random_state = 5) 
         
         # alguns métodos (e.g. SVM, KNN e Random Forest) são sensíveis a variação de parâmetros. 
         # Por isso, é recomendado selecionar os parâmetros usando uma busca em grade.
-        param_grid = {'n_estimators': np.arange(10,101,10)} 
-        
-        # inicia o classificador RF, implementado usando uma busca em grade
-        classifier = skl.model_selection.GridSearchCV(classifier_rf, cv=5, param_grid=param_grid, scoring = 'f1_macro')
+        if performGrid:
+            param_grid = {'n_estimators': np.arange(10,101,10)} 
+            
+            # inicia o classificador RF, implementado usando uma busca em grade
+            classifier = skl.model_selection.GridSearchCV(classifier, cv=5, param_grid=param_grid, scoring = 'f1_macro')
         
     elif method == 'bagging':  
-        # inicia o classificador. O parâmetro 'n_estimators' não foi indicado, pois será selecionado usando busca em grade.
-        classifier_bagging  = skl.ensemble.BaggingClassifier()
+        # inicia o classificador com os parâmetros default do Scikit
+        classifier  = skl.ensemble.BaggingClassifier()
         
         # alguns métodos (e.g. SVM, KNN e Random Forest) são sensíveis a variação de parâmetros. 
         # Por isso, é recomendado selecionar os parâmetros usando uma busca em grade.
-        param_grid = {'n_estimators': np.arange(10,101,10)} 
-        
-        # inicia o classificador Bagging, implementado usando uma busca em grade
-        classifier = skl.model_selection.GridSearchCV(classifier_bagging, cv=5, param_grid=param_grid, scoring = 'f1_macro')
+        if performGrid:
+            param_grid = {'n_estimators': np.arange(10,101,10)} 
+            
+            # inicia o classificador Bagging, implementado usando uma busca em grade
+            classifier = skl.model_selection.GridSearchCV(classifier, cv=5, param_grid=param_grid, scoring = 'f1_macro')
 
     elif method == 'adaboost':  
-        # inicia o classificador. O parâmetro 'n_estimators' não foi indicado, pois será selecionado usando busca em grade.
-        classifier_adaboost  = skl.ensemble.AdaBoostClassifier()
+        # inicia o classificador com os parâmetros default do Scikit
+        classifier  = skl.ensemble.AdaBoostClassifier()
         
         # alguns métodos (e.g. SVM, KNN e Random Forest) são sensíveis a variação de parâmetros. 
         # Por isso, é recomendado selecionar os parâmetros usando uma busca em grade.
-        param_grid = {'n_estimators': np.arange(10,101,10)} 
-
-        # inicia o classificador AdaBoost, implementado usando uma busca em grade        
-        classifier = skl.model_selection.GridSearchCV(classifier_adaboost, cv=5, param_grid=param_grid, scoring = 'f1_macro')
+        if performGrid:
+            param_grid = {'n_estimators': np.arange(10,101,10)} 
+    
+            # inicia o classificador AdaBoost, implementado usando uma busca em grade        
+            classifier = skl.model_selection.GridSearchCV(classifier, cv=5, param_grid=param_grid, scoring = 'f1_macro')
 
     return classifier
 
-def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, stopWords, stemming, termWeighting):
+def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, performGrid, stopWords, stemming, termWeighting):
     """
     Função usada para executar os experimentos
     """
@@ -267,7 +282,7 @@ def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, st
             x_test[x_test!=0]=1 #convert os dados para representação binária
         
         # chama a função para retornar um classificador baseado no nome fornecido como parâmetro
-        classifier = return_classifier(methodName)
+        classifier = return_classifier(methodName, performGrid)
         
         # treina o classificador com os dados de treinameto
         classifier.fit(x_train, y_train) 
