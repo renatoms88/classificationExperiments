@@ -12,9 +12,7 @@ import re #regular expression
 import os
 import sys 
 
-#==================================================
-#Função para calcular as métricas de classificação
-#==================================================
+
 def inf_teste(matriz_confusao, classes, printResults=True):
   """
   Função usada calcular as medidas de desempenho da classificação.
@@ -106,9 +104,6 @@ def inf_teste(matriz_confusao, classes, printResults=True):
   return resultados #return like a dictionary
 
 
-#============================================
-#Função para imprimir as médias dos folds
-#============================================
 def imprimiResultados(resultados,classes,end_resultados,metodo,nomeDataset,print_class=None):
     """
     Salva os resultados da classificação em formato CSV. Se o arquivo indicado pela variável 'pathResults' 
@@ -233,9 +228,7 @@ def matrix_to_xml(data):
     return xmlString
 
 
-#============================================
-#Classe para converter tf para tf-idf
-#============================================
+
 class tf2tfidf():
     """
     Faz a conversão de TF para TF-IDF de uma forma um pouco diferente da usada pelo Scikit Learn.
