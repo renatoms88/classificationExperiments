@@ -286,7 +286,9 @@ def perform_experiment(dataset, target, methodName, nomeDataset, pathResults, pe
         # realiza as etapas de pre-processamento no texto, tais como stemming e remoção de stopWords
         dataset[i] = textProcessor.trataTexto(dataset[i], stopWords = stopWords, stemming = stemming, corpusLanguage = 'english')
     
-    # divide a base de dados usando validacao cruzada k-folds
+    # divide a base de dados usando validacao cruzada k-folds. 
+    # Caso você queira usar houdout em vez de k-fold, troque a linha de código abaixo por:
+    # cv = skl.model_selection.StratifiedShuffleSplit(n_splits=1, test_size=0.8, random_state=0)
     cv = skl.model_selection.StratifiedKFold(n_splits=5, shuffle=True, random_state = 0)
     
     resultados=[]  # cria uma lista vazia para guardar os resultados obtidos em cada fold

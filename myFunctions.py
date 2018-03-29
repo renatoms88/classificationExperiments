@@ -124,21 +124,22 @@ def imprimiResultados(resultados,classes,end_resultados,metodo,nomeDataset,print
     metodo: string
         Nome do método usado no experimento. 
         
-    nomeDataset: string
+    nomeDataset: string or integer
         Nome da base de dados usada no experimento.
         
     print_class: string
-        Essa parâmetro indica qual é a classe positiva, ou seja a classe alvo do problema. 
-        Então, caso esse parâmetro tenha valor diferente de None, as colunas "acuraciaMean", "fprMean", 
-        "sensitividadeMean" e outras colunas terminadas por "Mean" do arquivo de resultados, irão conter o 
-        desempenho calculado "não" pela média das classes, mas considerando a classe setada como positiva.
+        None: as colunas "fpr", "sensitividade", "especificidade", "precisao" e "F-medida" do arquivo de resultados, irão conter o 
+        desempenho calculado considerando a média das classes
+        Nome de uma classe: se o nome de uma classe é indicado, essa parâmetro indica qual é a classe positiva, ou seja a classe alvo do problema. 
+            Nesse caso, as colunas "fpr", "sensitividade", "especificidade", "precisao" e "F-medida" do arquivo de resultados, irão conter o 
+            desempenho calculado considerando a classe setada como positiva.
     """
     
     nfolds = len(resultados)
 
     if not os.path.isfile(end_resultados):#se o arquivo não existe, adiciona os labels das colunas do .csv
         fileWrite  = open(end_resultados,"a") #abre arquivo em modo de ediçãos
-        fileWrite.write('base_dados,metodo,acuraciaMean,fprMean,sensitividadeMean,especificidadeMean,precisaoMean,F-medidaMean,mcc,sensitividadeMacro,precisaoMacro,F-medidaMacro,sensitividadeMicro,precisaoMicro,F-medidaMicro,kappa,roc_auc,tempo,confusionMatrix')    
+        fileWrite.write('base_dados,metodo,acuracia,fpr,sensitividade,especificidade,precisao,F-medida,mcc,sensitividadeMacro,precisaoMacro,F-medidaMacro,sensitividadeMicro,precisaoMicro,F-medidaMicro,kappa,roc_auc,tempo,confusionMatrix')    
         fileWrite.close();
         
     fileWrite  = open(end_resultados,"a") #abre arquivo em modo de ediçãos
