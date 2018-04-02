@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- 
+
 import os #para listar arquivos e diretorios
 import re #regular expression
 import numpy as np
